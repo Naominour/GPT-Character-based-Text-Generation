@@ -8,8 +8,6 @@ This project focuses on **generating text** character-by-character using **Trans
 ![Generative AI](https://img.shields.io/badge/Skill-Generative%20AI-green)
 ![Model Training and Evaluation](https://img.shields.io/badge/Skill-Model%20Training%20and%20Evaluation-orange)
 ![Model Deployment](https://img.shields.io/badge/Skill-Model%20Deployment-purpule)
-![CI/CD](https://img.shields.io/badge/Skill-CI/CD-blue)
-![Web Application](https://img.shields.io/badge/Skill-Web%20Application-yellow)
 ![Python Programming](https://img.shields.io/badge/Skill-Python%20Programming-blue)
 
 ## install
