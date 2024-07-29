@@ -1,3 +1,7 @@
+import os
+import pickle
+import requests
+import numpy as np
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
@@ -18,26 +22,54 @@ dropout = 0.2
 
 torch.manual_seed(1337)
 
-with open('input.txt', 'r', encoding='utf-8') as f:
-    text = f.read()
 
-chars = sorted(list(set(text)))
+input_file_path = os.path.join(os.path.dirname(__file__), 'input.txt')
+if not os.path.exists(input_file_path):
+    data_url = 'https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt'
+    with open(input_file_path, 'w') as f:
+        f.write(requests.get(data_url).text)
+
+
+with open('input_file_path', 'r', encoding='utf-8') as f:
+    data = f.read()
+
+chars = sorted(list(set(data)))
 vocab_size = len(chars)
 
 # creat a mapping from charecters to integers
 stoi = {ch: i for i, ch in enumerate(chars)}
 itos = {i: ch for i, ch in enumerate(chars)}
-
-encode = lambda s: [stoi[c] for c in s]
-decode = lambda l: ''.join([itos[i] for i in l])
+def encode(s):
+    return [stoi[c] for c in s]
+def decode(l):
+    return ''.join([itos[i] for i in l])
 
 # train and test split
-data = torch.tensor(encode(text), dtype=torch.long)
+#data = torch.tensor(encode(data), dtype=torch.long)
 n = int(0.9*len(data))
 train_data = data[:n]
 val_data = data[n:]
 
+train_ids = encode(train_data)
+val_ids = encode(val_data)
 
+# export to bin files
+train_ids = np.array(train_ids, dtype=np.uint16)
+val_ids = np.array(val_ids, dtype=np.uint16)
+train_ids.tofile(os.path.join(os.path.dirname(__file__), 'train.bin'))
+val_ids = val_ids.tofile(os.path.join(os.path.dirname(__file__), 'val.bin'))))
+
+# save the meta information
+meta = {
+   'vocab_size': vocab_size,
+   'itos': itos,
+   'stoi': stoi,
+}
+
+with open(os.path.join(os.path.dirname(__file__),'meta.pkl'), 'wb') as f:
+   pickle.dump(meta, f)
+
+   
 # data loading
 def get_batch(split):
     data = train_data if split=='train' else val_data
